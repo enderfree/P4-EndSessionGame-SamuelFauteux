@@ -34,7 +34,7 @@ public class TurnManager : MonoBehaviour
 
     private void OnDisable()
     {
-        OnTurnEnd += ManageEndTurn;
+        OnTurnEnd -= ManageEndTurn;
         GameManager.OnFightersReady -= OnFightersReady;
     }
 
