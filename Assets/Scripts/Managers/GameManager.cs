@@ -87,7 +87,7 @@ public class GameManager : GameManagerHyperRestriction
                 }
                 break;
             case ReasonsForBlackscreen.RoomTransition:
-                throw new NotImplementedException();
+                // throw new NotImplementedException();
                 break;
             default: break; // was probably called by another class
         }

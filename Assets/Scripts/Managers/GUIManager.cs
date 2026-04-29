@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static GameManager;
+using static Transition;
 
 public class GUIManager : MonoBehaviour
 {
@@ -55,6 +56,8 @@ public class GUIManager : MonoBehaviour
 
     private void OnEnable()
     {
+        GameManager.OnRoomChange += OnRoomChange;
+        Transition.OnTransitionOver += OnTransitionOver;
         GameManager.OnGameStateChange += OnGameStateChange;
         GameManager.OnFightersReady += OnFightersReady;
         GameManager.OnOverworldReady += OnOverworldReady;
@@ -73,6 +76,8 @@ public class GUIManager : MonoBehaviour
         GameManager.OnOverworldReady -= OnOverworldReady;
         GameManager.OnFightersReady -= OnFightersReady;
         GameManager.OnGameStateChange -= OnGameStateChange;
+        Transition.OnTransitionOver -= OnTransitionOver;
+        GameManager.OnRoomChange -= OnRoomChange;
     }
 
     void Update()
@@ -135,6 +140,16 @@ public class GUIManager : MonoBehaviour
     }
 
     // Events
+    private void OnRoomChange(Room oldRoom, Room newRoom)
+    {
+        SetBlackscreen(ReasonsForBlackscreen.RoomTransition);
+    }
+
+    private void OnTransitionOver()
+    {
+        UnsetBlackscreen();
+    }
+
     private void OnGameStateChange(GameStates oldGameState, GameStates newGameState)
     {
         SetBlackscreen(ReasonsForBlackscreen.GameStateChange);

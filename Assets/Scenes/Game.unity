@@ -6679,7 +6679,7 @@ Transform:
   m_GameObject: {fileID: 897850058}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19.739944, y: -0.47224998, z: -5}
+  m_LocalPosition: {x: -2.3023414e-19, y: -2.5333993e-16, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7252,7 +7252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   playerTransform: {fileID: 1938358625}
-  startingRoom: 0
+  startingRoom: 1
   healthbarPrefab: {fileID: 383151836451917265, guid: 6305170854c977044a003ff489adcc49, type: 3}
   dialogueManager: {fileID: 783800717}
 --- !u!4 &1006390037
@@ -10361,7 +10361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 690cfa0a2b0d75d42b3e3d411670e531, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  activationDirection: 1
+  activationDirection: 2
   destination: {fileID: 1514999712}
   destinationRoom: 0
 --- !u!1 &1365070077
@@ -11824,6 +11824,7 @@ GameObject:
   - component: {fileID: 1514999715}
   - component: {fileID: 1514999714}
   - component: {fileID: 1514999713}
+  - component: {fileID: 1514999716}
   m_Layer: 0
   m_Name: To Central Place
   m_TagString: Untagged
@@ -11963,6 +11964,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1514999716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514999711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 690cfa0a2b0d75d42b3e3d411670e531, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Transition
+  activationDirection: 1
+  destination: {fileID: 1328224628}
+  destinationRoom: 1
 --- !u!1 &1523023374
 GameObject:
   m_ObjectHideFlags: 0
@@ -13974,7 +13990,7 @@ MonoBehaviour:
   Composition:
     ScreenPosition: {x: 0, y: 0}
     DeadZone:
-      Enabled: 1
+      Enabled: 0
       Size: {x: 1, y: 0.2}
     HardLimits:
       Enabled: 0
