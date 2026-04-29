@@ -5,6 +5,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static GameManager;
 
 public class GUIManager : MonoBehaviour
 {
@@ -56,6 +57,7 @@ public class GUIManager : MonoBehaviour
     {
         GameManager.OnGameStateChange += OnGameStateChange;
         GameManager.OnFightersReady += OnFightersReady;
+        GameManager.OnOverworldReady += OnOverworldReady;
         TurnManager.OnPlayerTurnStart += OnPlayerTurnStart;
         Character.OnHPChanged += OnHPChanged;
         Character.OnMPChanged += OnMPChanged;
@@ -68,6 +70,7 @@ public class GUIManager : MonoBehaviour
         Character.OnMPChanged -= OnMPChanged;
         Character.OnHPChanged -= OnHPChanged;
         TurnManager.OnPlayerTurnStart -= OnPlayerTurnStart;
+        GameManager.OnOverworldReady -= OnOverworldReady;
         GameManager.OnFightersReady -= OnFightersReady;
         GameManager.OnGameStateChange -= OnGameStateChange;
     }
@@ -135,6 +138,11 @@ public class GUIManager : MonoBehaviour
     private void OnGameStateChange(GameStates oldGameState, GameStates newGameState)
     {
         SetBlackscreen(ReasonsForBlackscreen.GameStateChange);
+        
+        if (oldGameState == GameStates.Combat)
+        {
+            healthbars.Clear();
+        }
     }
 
     private void OnFightersReady(List<Character> fighters, List<GameObject> combatPrefabs, List<GameObject> healthbars)
@@ -193,6 +201,12 @@ public class GUIManager : MonoBehaviour
         UnsetBlackscreen();
     }
 
+    private void OnOverworldReady()
+    {
+        dialogueBox.SetActive(false);
+        UnsetBlackscreen();
+    }
+
     private void OnPlayerTurnStart()
     {
         pfpHolder.sprite = GameManager.playerChar.PFP;
@@ -216,7 +230,6 @@ public class GUIManager : MonoBehaviour
 
     private void OnHPChanged(Character character)
     {
-        Debug.Log(character.HP);
         healthbars[fighters.IndexOf(character)].transform.Find("Health Bar").GetComponent<Slider>().value = character.HP;
     }
 

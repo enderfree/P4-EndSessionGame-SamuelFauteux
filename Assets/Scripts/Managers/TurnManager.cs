@@ -135,16 +135,6 @@ public class TurnManager : MonoBehaviour
 
     private void Victory()
     {
-        Sprite zeoliaPFP = CharManager.chars[CharNames.Zeolia].PFP;
-        GameManager.staticDialogueManager.StartDialogue(
-            new List<Dialogue>()
-            {
-                new Dialogue(zeoliaPFP, "Ow, ow, ow! Ok, ok! I get it!"),
-                new Dialogue(zeoliaPFP, "You're fully warmed up!"),
-                new Dialogue(zeoliaPFP, "Which is a shame since it's already the end of the game, but I hope you had fun!"),
-                new Dialogue(zeoliaPFP, "Well, at least I can bring you back to the main menu!")
-            },
-            () => { UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu"); }
-        );
+        GameManager.EndCombat();
     }
 }

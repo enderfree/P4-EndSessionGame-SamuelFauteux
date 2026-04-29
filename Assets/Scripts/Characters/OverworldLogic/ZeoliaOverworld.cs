@@ -61,7 +61,9 @@ public class ZeoliaOverworld : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent<Player>(out Player playerScript))
         {
-            GameManager.StartCombat(CharManager.chars[CharNames.Zeolia]);
+            GameManager.StartCombat(enemy1: CharManager.chars[CharNames.Zeolia], doAfterCombat: () => {
+                Destroy(gameObject);
+            });
         }
     }
 }

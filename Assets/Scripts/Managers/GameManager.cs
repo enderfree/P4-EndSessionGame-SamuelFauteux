@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : GameManagerHyperRestriction
 {
     [SerializeField] private CinemachineCamera cinemachine;
+    [SerializeField] private Transform playerTransform;
     [SerializeField] private RoomNames startingRoom;
     [SerializeField] private GameObject healthbarPrefab;
     [SerializeField] private DialogueManager dialogueManager;
@@ -16,6 +18,9 @@ public class GameManager : GameManagerHyperRestriction
     public delegate void FightersReady(List<Character> enemies, List<GameObject> combatPrefabs, List<GameObject> healthbars);
     public static event FightersReady OnFightersReady;
 
+    public delegate void OverworldReady();
+    public static event OverworldReady OnOverworldReady;
+
     public static DialogueManager staticDialogueManager; // this manager is sometimes called from non-monobehavior classes or some that do not exist in the editor
     public static Character playerChar; 
 
@@ -24,6 +29,7 @@ public class GameManager : GameManagerHyperRestriction
     // Combat tmp
     private static Character[] encounterEnemies = new Character[5];
     private GameObject[] tmpCombatGameObjects = new GameObject[6];
+    private static Action afterCombatAction;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start() // Awake was too soon
@@ -91,7 +97,38 @@ public class GameManager : GameManagerHyperRestriction
     // state initializations
     private void InitiateOverworld()
     {
-        throw new NotImplementedException();
+        if (afterCombatAction != null)
+        {
+            afterCombatAction();
+        }
+
+        cinemachine.Follow = playerTransform;
+
+        // Make overworld chars visible
+        foreach (GameObject character in currentRoom.Chars)
+        {
+            if (character.TryGetComponent<Renderer>(out Renderer renderer))
+            {
+                renderer.enabled = true;
+            }
+        }
+
+        foreach (GameObject character in RoomManager.rooms[RoomNames.Misc].Chars)
+        {
+            // this redondance will be removed if I figure how to handle transitive rooms better
+            if (character.TryGetComponent<Renderer>(out Renderer renderer))
+            {
+                renderer.enabled = true;
+            }
+        }
+
+        // delete combat prefabs
+        foreach (GameObject combatGameObject in tmpCombatGameObjects)
+        {
+            Destroy(combatGameObject);
+        }
+
+        OnOverworldReady();
     }
 
     private void InitiateCombat() 
@@ -150,7 +187,7 @@ public class GameManager : GameManagerHyperRestriction
     /// <param name="enemy3">enemy in position 3</param>
     /// <param name="enemy4">enemy in position 4</param>
     /// <param name="enemy5">enemy in position 5</param>
-    public static void StartCombat(Character enemy1 = null, Character enemy2 = null, Character enemy3 = null, Character enemy4 = null, Character enemy5 = null)
+    public static void StartCombat(Character enemy1 = null, Character enemy2 = null, Character enemy3 = null, Character enemy4 = null, Character enemy5 = null, Action doAfterCombat = null)
     {
         if (enemy1 is null && enemy2 is null && enemy3 is null && enemy4 is null && enemy5 is null)
         {
@@ -160,7 +197,13 @@ public class GameManager : GameManagerHyperRestriction
         {
             GameState = GameStates.Combat;
             encounterEnemies = new Character[5] { enemy1, enemy2, enemy3, enemy4, enemy5 };
+            afterCombatAction = doAfterCombat;
         }
+    }
+
+    public static void EndCombat()
+    {
+        GameState = GameStates.Overworld;
     }
 
     public static void GameOver()
