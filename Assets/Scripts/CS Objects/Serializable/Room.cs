@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Cinemachine;
 using System.Collections.Generic;
 
 [System.Serializable]
@@ -10,9 +11,10 @@ public class Room
 
     [Header("Overworld")]
     [SerializeField] private List<GameObject> chars; // chars always in the room
+    [SerializeField] private CinemachineCamera overworldCamera;
 
     [Header("Combat")]
-    [SerializeField] private Transform cameraTarget;
+    [SerializeField] private CinemachineCamera combatCamera;
     [SerializeField] private Transform playerPos;
     [SerializeField] private List<Transform> enemyPos; // idealy I want 5, but arrays aren't serializablw...
 
@@ -22,7 +24,9 @@ public class Room
 
     public List<GameObject> Chars { get { return chars; } }
 
-    public Transform CameraTarget { get { return cameraTarget; } }
+    public CinemachineCamera OverworldCamera { get { return overworldCamera; } }
+
+    public CinemachineCamera CombatCamera { get { return combatCamera; } }
 
     public Transform PlayerPos { get { return playerPos; } }
 

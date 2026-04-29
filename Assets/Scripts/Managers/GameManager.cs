@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Unity.Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : GameManagerHyperRestriction
 {
-    [SerializeField] private CinemachineCamera cinemachine;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private RoomNames startingRoom;
     [SerializeField] private GameObject healthbarPrefab;
@@ -32,11 +29,13 @@ public class GameManager : GameManagerHyperRestriction
     private static Action afterCombatAction;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Start() // Awake was too soon
+    private void Start() // Awake and OnEnable were too soon
     {
         staticDialogueManager = dialogueManager;
         playerChar = CharManager.chars[CharNames.Korrah]; // temp until I figure how to do char selection
         currentRoom = RoomManager.rooms[startingRoom];
+
+        CameraManager.Initialization();
     }
 
     private void OnEnable()
@@ -102,7 +101,7 @@ public class GameManager : GameManagerHyperRestriction
             afterCombatAction();
         }
 
-        cinemachine.Follow = playerTransform;
+        CameraManager.ActiveCinemachine = currentRoom.OverworldCamera;
 
         // Make overworld chars visible
         foreach (GameObject character in currentRoom.Chars)
@@ -133,8 +132,8 @@ public class GameManager : GameManagerHyperRestriction
 
     private void InitiateCombat() 
     {
-        cinemachine.Follow = currentRoom.CameraTarget;
-        
+        CameraManager.ActiveCinemachine = currentRoom.CombatCamera;
+
         // Make overworld chars invisible
         foreach (GameObject character in currentRoom.Chars)
         {
