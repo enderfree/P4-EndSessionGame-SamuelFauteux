@@ -7,6 +7,7 @@ public class RoomManager : MonoBehaviour
     // but clutter plenty when I give them to managers so I made it its own
 
     // Rooms
+    [SerializeField] private Room archives;
     [SerializeField] private Room centralPlace;
     [SerializeField] private Room misc;
 
@@ -14,6 +15,7 @@ public class RoomManager : MonoBehaviour
 
     private void Awake()
     {
+        rooms.Add(archives.RoomName, archives);
         rooms.Add(centralPlace.RoomName, centralPlace);
         rooms.Add(misc.RoomName, misc);
     }
