@@ -92,7 +92,7 @@ public abstract class Character: ISerializationCallbackReceiver
         { 
             return hp; 
         } 
-        protected set 
+        set 
         { 
             hp = value;
             OnHPChanged(this);
@@ -152,7 +152,7 @@ public abstract class Character: ISerializationCallbackReceiver
 
                 if (HP <= 0)
                 {
-                    StatusEffects.RemoveAll(x => x.Duration <= 0);
+                    StatusEffects.Clear();
                     dialogues.Add(new Dialogue(PFP, CharName + " fainted."));
 
                     animManager.TriggerAnimator(

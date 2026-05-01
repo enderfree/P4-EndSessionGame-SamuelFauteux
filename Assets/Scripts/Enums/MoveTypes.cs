@@ -1,7 +1,7 @@
 public enum MoveTypes
 {
     Empty,
-    Healing,
+    Light,
     Physical,
     Shadow,
     Water

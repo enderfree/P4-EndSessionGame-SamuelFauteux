@@ -15,7 +15,7 @@ public class TurnManager : MonoBehaviour
 
     private List<Character> turnOrder = new List<Character>();
     public static  List<Character> enemies = new List<Character>();
-    private List<GameObject> combatPrefabs = new List<GameObject>();
+    public static List<GameObject> combatPrefabs = new List<GameObject>();
     private int selectedMove = 0;
 
     // I have a GameStates enum, not a TurnState enum... 
@@ -45,10 +45,10 @@ public class TurnManager : MonoBehaviour
     }
 
     // Events
-    private void OnFightersReady(List<Character> fighters, List<GameObject> combatPrefabs, List<GameObject> healthbars)
+    private void OnFightersReady(List<Character> fighters, List<GameObject> combat, List<GameObject> healthbars)
     {
         enemies = fighters;
-        this.combatPrefabs = combatPrefabs;
+        combatPrefabs = combat;
         turnOrder = new List<Character>();
 
         // for now, I don't have the speed stat so player first.
