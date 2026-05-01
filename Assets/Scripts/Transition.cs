@@ -44,6 +44,8 @@ public class Transition : MonoBehaviour
                 CameraManager.ActiveCinemachine = GameManager.CurrentRoom.OverworldCamera;
 
                 playerOnTrigger = false;
+                GameManager.saveManager.loadAt = destination.position;
+                GameManager.saveManager.Save();
                 OnTransitionOver();
             }
 

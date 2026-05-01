@@ -5,9 +5,11 @@ using UnityEngine;
 public class GameManager : GameManagerHyperRestriction
 {
     [SerializeField] private Transform playerTransform;
-    [SerializeField] private RoomNames startingRoom;
     [SerializeField] private GameObject healthbarPrefab;
     [SerializeField] private DialogueManager dialogueManager;
+
+    public delegate void FinishedGameManagerInitialisation();
+    public static event FinishedGameManagerInitialisation OnFinishedGameManagerInitialisation;
 
     public delegate void RoomChange(Room oldRoom, Room newRoom);
     public static event RoomChange OnRoomChange;
@@ -19,6 +21,8 @@ public class GameManager : GameManagerHyperRestriction
     public static event OverworldReady OnOverworldReady;
 
     public static DialogueManager staticDialogueManager; // this manager is sometimes called from non-monobehavior classes or some that do not exist in the editor
+    public static SaveManager saveManager; // ^^
+    
     public static Character playerChar; 
 
     private static Room currentRoom;
@@ -32,10 +36,11 @@ public class GameManager : GameManagerHyperRestriction
     private void Start() // Awake and OnEnable were too soon
     {
         staticDialogueManager = dialogueManager;
-        playerChar = CharManager.chars[CharNames.Korrah]; // temp until I figure how to do char selection
-        currentRoom = RoomManager.rooms[startingRoom];
+        saveManager = SaveManager.Load();
+        playerChar = CharManager.chars[saveManager.playerChar]; 
+        currentRoom = RoomManager.rooms[saveManager.currentRoom];
 
-        CameraManager.Initialization();
+        OnFinishedGameManagerInitialisation();
     }
 
     private void OnEnable()
@@ -65,6 +70,7 @@ public class GameManager : GameManagerHyperRestriction
         {
             OnRoomChange(currentRoom, value);
             currentRoom = value;
+            saveManager.currentRoom = currentRoom.RoomName;
         }
     }
 
@@ -99,6 +105,7 @@ public class GameManager : GameManagerHyperRestriction
         if (afterCombatAction != null)
         {
             afterCombatAction();
+            saveManager.Save();
         }
 
         CameraManager.ActiveCinemachine = currentRoom.OverworldCamera;

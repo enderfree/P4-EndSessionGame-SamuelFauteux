@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Splines.ExtrusionShapes;
 
 public class Player : MonoBehaviour
 {
@@ -26,12 +27,14 @@ public class Player : MonoBehaviour
         inputAction.Player.Move.performed += OnMovePerformed;
         inputAction.Player.Move.canceled += OnMoveCanceled;
 
+        GameManager.OnFinishedGameManagerInitialisation += Load;
         GameManager.OnGameStateChange += OnGameStateChange;
     }
 
     public void OnDisable()
     {
         GameManager.OnGameStateChange -= OnGameStateChange;
+        GameManager.OnFinishedGameManagerInitialisation -= Load;
 
         inputAction.Player.Move.canceled -= OnMoveCanceled;
         inputAction.Player.Move.performed -= OnMovePerformed;
@@ -99,6 +102,11 @@ public class Player : MonoBehaviour
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
         animator.SetBool("isWalking", false);
+    }
+
+    private void Load()
+    {
+        transform.position = GameManager.saveManager.loadAt;
     }
 
     private void OnGameStateChange(GameStates oldGameState, GameStates newGameState)

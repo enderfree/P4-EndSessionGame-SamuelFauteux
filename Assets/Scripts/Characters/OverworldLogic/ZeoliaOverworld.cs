@@ -10,15 +10,25 @@ public class ZeoliaOverworld : MonoBehaviour
 
     private int direction = 5; // for animation
 
-     void Awake()
+    void Awake()
     {
         agent.updateRotation = false;
         agent.updateUpAxis = false;
     }
 
+    private void OnEnable()
+    {
+        GameManager.OnFinishedGameManagerInitialisation += Load;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnFinishedGameManagerInitialisation -= Load;
+    }
+
     void Update()
     {
-        if(GameManager.GameState == GameStates.Overworld)
+        if (GameManager.GameState == GameStates.Overworld)
         {
             agent.SetDestination(target.position);
 
@@ -61,9 +71,21 @@ public class ZeoliaOverworld : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent<Player>(out Player playerScript))
         {
-            GameManager.StartCombat(enemy1: CharManager.chars[CharNames.Zeolia], doAfterCombat: () => {
-                Destroy(gameObject);
-            });
+            GameManager.StartCombat(enemy1: CharManager.chars[CharNames.Zeolia], doAfterCombat: () => OnZeoliaDefeated());
         }
+    }
+
+    private void Load() 
+    {
+        if (GameManager.saveManager.zeoliaDefeated)
+        {
+            OnZeoliaDefeated();
+        }
+    }
+
+    private void OnZeoliaDefeated()
+    {
+        GameManager.saveManager.zeoliaDefeated = true;
+        Destroy(gameObject);
     }
 }

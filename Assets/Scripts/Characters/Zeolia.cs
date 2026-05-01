@@ -1,4 +1,5 @@
 using System;
+using Unity.Cinemachine;
 using UnityEngine;
 
 [System.Serializable]
@@ -85,14 +86,14 @@ public class Zeolia: Character
 
     private void Stab(Character target, GameObject enemyPrefab, GameObject combatPrefab)
     {
-        float damage = 5;
+        float damage = 5f;
+        float manaDrain = 0f;
 
         if (target.MP > 0)
         {
             if (MP < MaxMana)
             {
-                target.MP -= 1;
-                MP += 1;
+                manaDrain = 1f;
             }
         }
         else
@@ -105,8 +106,11 @@ public class Zeolia: Character
             enemyPrefab, 
             combatPrefab, 
             "Zeolia stabbed " + target.CharName + "!", 
-            "Zeolia attempted to stab " + target.CharName + ", but they swiftly dodged."
-        );
+            "Zeolia attempted to stab " + target.CharName + ", but they swiftly dodged.", 
+            () => {
+                target.MP -= manaDrain;
+                MP += manaDrain;
+            });
     }
 
     private void ManaLeechAnim(Character target, GameObject enemyPrefab, GameObject combatPrefab)
@@ -121,6 +125,10 @@ public class Zeolia: Character
 
     private void ManaLeech(Character target, GameObject enemyPrefab, GameObject combatPrefab)
     {
+        float manaLoss = 0f;
+        float manaGain = 0f;
+        float hpGain = 0f;
+
         float maxManaDrain = 2f;
         float manaDrain = maxManaDrain;
         float damage = 0f;
@@ -132,31 +140,31 @@ public class Zeolia: Character
             damage = (maxManaDrain - manaDrain) * 5f;
         }
 
-        target.MP -= manaDrain;
+        manaLoss = manaDrain;
         ++manaDrain; // gives drained mana + 1
         float personalManaDiff = MaxMana - MP;
 
         if (personalManaDiff < manaDrain)
         {
-            MP += personalManaDiff;
+            manaGain = personalManaDiff;
             float healing = (manaDrain - personalManaDiff) * 5f;
             float personalHPDiff = MaxHP - HP;
 
             if (personalHPDiff < healing)
             {
-                HP += personalHPDiff;
+                hpGain = personalHPDiff;
                 damage += (healing - personalHPDiff);
                 hitText = "Zeolia seems to be consuming " + target.CharName + "'s very life force!";
             }
             else
             {
-                HP += healing;
+                hpGain = healing;
                 hitText += " She seems quite satisfied with the result";
             }
         }
         else
         {
-            MP += manaDrain;
+            manaGain = manaDrain;
         }
 
         if (target.MP <= 0f)
@@ -174,8 +182,12 @@ public class Zeolia: Character
             enemyPrefab, 
             combatPrefab, 
             hitText, 
-            "Zeolia steals mana from " + target.CharName + ", but " + target.CharName + " managed to avoid the brunt of it."
-        );
+            "Zeolia reached for " + target.CharName + ", but " + target.CharName + " moved aside in time.", 
+            () => {
+                target.MP -= manaLoss;
+                MP += manaGain;
+                HP += hpGain;
+            });
     }
 
     private void DarkPowerAnim(Character target, GameObject enemyPrefab, GameObject combatPrefab)

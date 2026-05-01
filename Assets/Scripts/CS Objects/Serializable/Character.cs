@@ -114,7 +114,7 @@ public abstract class Character: ISerializationCallbackReceiver
     public abstract Action<GameObject, GameObject> CombatAI { get; }
 
     // misc
-    public virtual void TakeDamage(Damage damage, GameObject enemyPrefab, GameObject combatPrefab, string hitMessage, string missMessage)
+    public virtual void TakeDamage(Damage damage, GameObject enemyPrefab, GameObject combatPrefab, string hitMessage, string missMessage, Action extraOnHit = null)
     {
         CombatAnimationsManager animManager = enemyPrefab.GetComponent<CombatAnimationsManager>();
         List<Dialogue> dialogues = new List<Dialogue>();
@@ -131,6 +131,11 @@ public abstract class Character: ISerializationCallbackReceiver
             if (HP > 0)
             {
                 HP -= damage.Amount;
+
+                if (extraOnHit != null)
+                {
+                    extraOnHit();
+                }
 
                 if (HP <= 0)
                 {
