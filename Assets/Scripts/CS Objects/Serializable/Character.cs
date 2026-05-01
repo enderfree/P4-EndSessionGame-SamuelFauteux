@@ -69,7 +69,20 @@ public abstract class Character: ISerializationCallbackReceiver
     public Sprite PFP { get { return pfp; } }
     public GameObject CombatPrefab { get { return combatPrefab; } }
     public float MaxHP { get { return maxHP; } }
-    public float Evasion { get { return evasion; } }
+    public float Evasion 
+    { 
+        get 
+        { 
+            if (StatusEffects.Exists(x => x.StatusEffectName == StatusEffectNames.ShadowShroud))
+            {
+                return evasion + 0.2f;
+            }
+            else
+            {
+                return evasion;
+            }
+        } 
+    }
     public float AtkDmg { get { return physDmg; } }
     public float MagicDmg { get { return magicDmg; } }
     public float MaxMana { get { return maxMana; } }
@@ -139,6 +152,7 @@ public abstract class Character: ISerializationCallbackReceiver
 
                 if (HP <= 0)
                 {
+                    StatusEffects.RemoveAll(x => x.Duration <= 0);
                     dialogues.Add(new Dialogue(PFP, CharName + " fainted."));
 
                     animManager.TriggerAnimator(

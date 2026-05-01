@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -28,7 +29,13 @@ public class Zeolia: Character
                 1f,
                 (Character target, GameObject enemyPrefab, GameObject combatPrefab) => ManaLeechAnim(target, enemyPrefab, combatPrefab)
             ), 
-            null, // I don't have enough time to handle status effects in the end
+            new Move(
+                "Shadow Shroud", 
+                "Empowers your shadow!", 
+                MoveTypes.Shadow,
+                2f,
+                (Character target, GameObject enemyPrefab, GameObject combatPrefab) => ShadowShrowdAnim(target, enemyPrefab, combatPrefab)
+            ),
             new Move(
                 "Dark Power", 
                 "Deals 50 points of damage.", 
@@ -57,6 +64,11 @@ public class Zeolia: Character
         if (MP <= 0)
         {
             StabAnim(GameManager.playerChar, enemyPrefab, combatPrefab);
+        }
+        else if (MP >= Moves[2].ManaCost && !StatusEffects.Exists(x => x.StatusEffectName == StatusEffectNames.ShadowShroud))
+        {
+            MP -= Moves[2].ManaCost;
+            ShadowShrowdAnim(GameManager.playerChar, enemyPrefab, combatPrefab);
         }
         else if (MP >= Moves[3].ManaCost)
         {
@@ -89,16 +101,31 @@ public class Zeolia: Character
         float damage = 5f;
         float manaDrain = 0f;
 
+        bool shrowded = StatusEffects.Exists(x => x.StatusEffectName == StatusEffectNames.ShadowShroud);
+
         if (target.MP > 0)
         {
-            if (MP < MaxMana)
+            manaDrain = 1f;
+
+            if (shrowded)
             {
-                manaDrain = 1f;
+                manaDrain *= StatusEffect.shadowShroudDmgMultiplier;
+            }
+
+            float missingMana = MaxMana - MP;
+            if (missingMana < manaDrain)
+            {
+                manaDrain = missingMana;
             }
         }
         else
         {
             damage *= 2;
+        }
+
+        if (shrowded)
+        {
+            damage *= StatusEffect.shadowShroudDmgMultiplier;
         }
 
         target.TakeDamage(
@@ -130,6 +157,12 @@ public class Zeolia: Character
         float hpGain = 0f;
 
         float maxManaDrain = 2f;
+
+        if (StatusEffects.Exists(x => x.StatusEffectName == StatusEffectNames.ShadowShroud))
+        {
+            maxManaDrain *= StatusEffect.shadowShroudDmgMultiplier;
+        }
+
         float manaDrain = maxManaDrain;
         float damage = 0f;
         string hitText = "Zeolia drains " + target.CharName + ".";
@@ -190,6 +223,32 @@ public class Zeolia: Character
             });
     }
 
+    private void ShadowShrowdAnim(Character target, GameObject enemyPrefab, GameObject combatPrefab)
+    {
+        CombatAnimationsManager animManager = combatPrefab.GetComponent<CombatAnimationsManager>();
+        animManager.TriggerAnimator(
+            combatPrefab.GetComponent<Animator>(),
+            CombatAnimationsManager.Triggers.Cast,
+            () => ShadowShrowd(target, enemyPrefab, combatPrefab)
+        );
+    }
+
+    private void ShadowShrowd(Character target, GameObject enemyPrefab, GameObject combatPrefab)
+    {
+        StatusEffects.Add(new StatusEffect(
+            StatusEffectNames.ShadowShroud,
+            "Improves Evasion and slightly empowers your Shadows.", 
+            "Shr", 
+            Color.purple, 
+            3
+        ));
+
+        GameManager.staticDialogueManager.StartDialogue(
+            new List<Dialogue>() { new Dialogue(PFP, "Zeolia sleeked into the shadows.") },
+            () => TurnManager.EndTurn()
+        );
+    }
+
     private void DarkPowerAnim(Character target, GameObject enemyPrefab, GameObject combatPrefab)
     {
         CombatAnimationsManager animManager = combatPrefab.GetComponent<CombatAnimationsManager>();
@@ -204,6 +263,11 @@ public class Zeolia: Character
     {  
         string hitMessage = target.CharName + " can feel the darkness in their heart.";
         float damage = 50f * MagicDmg;
+
+        if (StatusEffects.Exists(x => x.StatusEffectName == StatusEffectNames.ShadowShroud))
+        {
+            damage *= StatusEffect.shadowShroudDmgMultiplier;
+        }
 
         if (damage >= target.HP)
         {

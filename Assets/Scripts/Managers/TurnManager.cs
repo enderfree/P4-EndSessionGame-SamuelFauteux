@@ -112,6 +112,13 @@ public class TurnManager : MonoBehaviour
     // misc
     private void PlayTurn()
     {
+        foreach(StatusEffect statusEffect in turnOrder[0].StatusEffects)
+        {
+            --statusEffect.Duration;
+        }
+
+        turnOrder[0].StatusEffects.RemoveAll(x => x.Duration <= 0);
+
         if (turnOrder[0].HP <= 0)
         {
             OnTurnEnd();
@@ -135,6 +142,11 @@ public class TurnManager : MonoBehaviour
 
     private void Victory()
     {
+        foreach (Character character in turnOrder)
+        {
+            character.StatusEffects.Clear();
+        }
+
         GameManager.EndCombat();
     }
 }
