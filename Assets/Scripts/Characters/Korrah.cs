@@ -51,10 +51,11 @@ public class Korrah: Character
     // Move
     private void WaterGunAnim(Character target, GameObject enemyPrefab, GameObject combatPrefab)
     {
-        CombatAnimationsManager animManager = combatPrefab.GetComponent<CombatAnimationsManager>();
+        KorrahCombatAnimationsManager animManager = combatPrefab.GetComponent<KorrahCombatAnimationsManager>();
         animManager.TriggerAnimator(
             combatPrefab.GetComponent<Animator>(),
             CombatAnimationsManager.Triggers.Cast,
+            () => animManager.WaterGun(enemyPrefab.transform.position), 
             () => WaterGun(target, enemyPrefab, combatPrefab)
         );
      }
@@ -76,7 +77,7 @@ public class Korrah: Character
         animManager.TriggerAnimator(
             combatPrefab.GetComponent<Animator>(),
             CombatAnimationsManager.Triggers.Cast,
-            () => HealingLight(target, enemyPrefab, combatPrefab)
+            callback: () => HealingLight(target, enemyPrefab, combatPrefab)
         );
     }
 
@@ -108,7 +109,7 @@ public class Korrah: Character
         animManager.TriggerAnimator(
             combatPrefab.GetComponent<Animator>(),
             CombatAnimationsManager.Triggers.Cast,
-            () => HolyLight(target, enemyPrefab, combatPrefab)
+            callback: () => HolyLight(target, enemyPrefab, combatPrefab)
         );
     }
 

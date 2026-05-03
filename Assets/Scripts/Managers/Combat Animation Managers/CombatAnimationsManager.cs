@@ -24,12 +24,41 @@ public class CombatAnimationsManager : MonoBehaviour
         Stab
     }
 
+    protected Animator animator;
+    
+    protected Action middleware;
     protected Action pendingMove;
 
-    public virtual void TriggerAnimator(Animator animator, Triggers trigger, Action callback = null)
+    // unity
+    
+
+    // utils
+    public virtual void TriggerAnimator(Animator animator, Triggers trigger, Action middleware = null, Action callback = null)
     {
+        this.animator = animator;
+        this.middleware = middleware;
         pendingMove = callback;
         animator.SetTrigger(trigger.ToString());
+    }
+
+    protected virtual void PauseAnimation()
+    {
+        animator.speed = 0f;
+    }
+
+    protected virtual void ResumeAnimation()
+    {
+        animator.speed = 0.5f; // all animations run at half speed
+    }
+
+
+    // called by animations
+    public virtual void Middleware()
+    {
+        if (middleware != null)
+        {
+            middleware();
+        }
     }
 
     public virtual void Cast()

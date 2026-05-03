@@ -92,7 +92,7 @@ public class Zeolia: Character
         animManager.TriggerAnimator(
             combatPrefab.GetComponent<Animator>(),
             CombatAnimationsManager.Triggers.Stab,
-            () => Stab(target, enemyPrefab, combatPrefab)
+            callback: () => Stab(target, enemyPrefab, combatPrefab)
         );
     }
 
@@ -146,7 +146,7 @@ public class Zeolia: Character
         animManager.TriggerAnimator(
             combatPrefab.GetComponent<Animator>(),
             CombatAnimationsManager.Triggers.Stab,
-            () => ManaLeech(target, enemyPrefab, combatPrefab)
+            callback: () => ManaLeech(target, enemyPrefab, combatPrefab)
         );
     }
 
@@ -229,7 +229,7 @@ public class Zeolia: Character
         animManager.TriggerAnimator(
             combatPrefab.GetComponent<Animator>(),
             CombatAnimationsManager.Triggers.Cast,
-            () => ShadowShrowd(target, enemyPrefab, combatPrefab)
+            callback: () => ShadowShrowd(target, enemyPrefab, combatPrefab)
         );
     }
 
@@ -255,7 +255,7 @@ public class Zeolia: Character
         animManager.TriggerAnimator(
             combatPrefab.GetComponent<Animator>(),
             CombatAnimationsManager.Triggers.Cast,
-            () => DarkPower(target, enemyPrefab, combatPrefab)
+            callback: () => DarkPower(target, enemyPrefab, combatPrefab)
         );
     }
 
